@@ -1,62 +1,47 @@
 #!/usr/bin/env python3
-""" LFUCache module with caching system"""
-
+""" LFU Caching with caching machine """
 from base_caching import BaseCaching
-from collections import OrderedDict
 
 
 class LFUCache(BaseCaching):
-    """LFUCache impls caching system with LFU eviction policy and LRU."""
+    """LFUCache implements a caching system with LFU eviction policy"""
 
     def __init__(self):
-        """Initialize LFUCache by calling parent initializer."""
+        """Initialize LFUCache by calling the parent initializer"""
         super().__init__()
-        self.frequency = {}
-        self.order = OrderedDict()
+        self.frequencies = {}
 
     def put(self, key, item):
-        """Add an item to the cache using LFU eviction if needed.
+        """Add an item in cache using LFU eviction if needed"""
+        if key and item:
+            if key in self.cache_data:
+                # Update item and frequency
+                self.cache_data[key] = item
+                self.frequencies[key] += 1
+            else:
+                # Add new item and set its frequency to 1
+                if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
+                    # Evict least frequently used item(s)
+                    min_frequency = min(self.frequencies.values())
+                    keys_to_remove = [
+                        k for k, v in self.frequencies.items()
+                        if v == min_frequency]
+                    # Remove first item that was least frequently used
+                    discard = keys_to_remove[0]
+                    del self.cache_data[discard]
+                    del self.frequencies[discard]
+                    print("DISCARD:", discard)
+                self.cache_data[key] = item
+                self.frequencies[key] = 1
 
-        Args:
-            key: The key to be assigned in cache.
-            item: The item to store in cache.
-        """
-        if key is None or item is None:
-            return
-
+    def get(self, key):
+        """Retrieve item from cache by key and update its access"""
         if key in self.cache_data:
-            # Update the existing item and frequency
-            self.cache_data[key] = item
-            self.frequency[key] += 1
-            self.order.move_to_end(key)
-        else
-        if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
-            min_freq = min(self.frequency.values())
-            lfu_keys =
-            [k for k, freq in self.frequency.items() if freq == min_freq]
-            lfu_lru_key = lfu_keys[0] if len(lfu_keys) ==
-            1 else next(k for k in self.order if k in lfu_keys)
-            print(f"DISCARD: {lfu_lru_key}")
-            del self.cache_data[lfu_lru_key]
-            del self.frequency[lfu_lru_key]
-            del self.order[lfu_lru_key]
+            # Update the frequency
+            self.frequencies[key] += 1
+            return self.cache_data[key]
+        return None
 
-            self.cache_data[key] = item
-            self.frequency[key] = 1
-            self.order[key] = None
-
-        def get(self, key):
-            """Retrieve item from cache by key and update its access.
-
-        Args:
-            key: The key associated with the item.
-
-        Returns:
-            Value in cache_data, or None if key is None or not in cache.
-        """
-        if key is None or key not in self.cache_data:
-            return None
-
-        self.frequency[key] += 1
-        self.order.move_to_end(key)
-        return self.cache_data[key]
+    def cache_info(self):
+        """Return the cache information"""
+        return self.cache_data, self.frequencies
