@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 Flask application with Babel and forced locale parameter.
+Module-sets up Flask app that supports multiple lang's using Flask-Babel.
+The `_` func is shortcut for gettext, used to mark str's for translation.
 """
 
 from flask import Flask, render_template, request
