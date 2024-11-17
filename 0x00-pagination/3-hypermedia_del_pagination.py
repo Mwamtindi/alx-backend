@@ -51,7 +51,10 @@ class Server:
             else:
                 break
 
-        next_index = data_keys[start_index + page_size] if start_index + page_size < len(data_keys) else None
+        if start_index + page_size < len(data_keys):
+            next_index = data_keys[start_index + page_size]
+        else:
+            next_index = None
 
         return {
             "index": index,
