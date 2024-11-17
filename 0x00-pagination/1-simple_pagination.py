@@ -6,6 +6,7 @@ a database of popular baby names.
 
 import csv
 from typing import List, Tuple
+import math
 
 
 def index_range(page: int, page_size: int) -> Tuple[int, int]:
@@ -39,7 +40,7 @@ class Server:
             List[List]: The dataset of popular baby names.
         """
         if self.__dataset is None:
-            with open(self.DATA_FILE) as f:
+            with open(self.DATA_FILE, encoding='utf-8') as f:
                 reader = csv.reader(f)
                 dataset = [row for row in reader]
             self.__dataset = dataset[1:]  # Skip the header
@@ -63,10 +64,10 @@ class Server:
         assert isinstance(page_size, int) and page_size > 0,
         "Page size must be an integer greater than 0."
 
-        start_indx, end_indx = index_range(page, page_size)
+        start_idx, end_idx = index_range(page, page_size)
         dataset = self.dataset()
 
-        if start_indx >= len(dataset):
+        if start_idx >= len(dataset):
             return []
 
-        return dataset[start_indx:end_indx]
+        return dataset[start_idx:end_idx]
