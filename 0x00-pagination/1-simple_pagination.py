@@ -21,9 +21,10 @@ def index_range(page: int, page_size: int) -> Tuple[int, int]:
         Tuple: A tuple containing the start idx and end idx
         for the items on the specified page.
     """
-    start_indx = (page - 1) * page_size
+    """start_indx = (page - 1) * page_size
     end_indx = start_indx + page_size
-    return start_indx, end_indx
+    return start_indx, end_indx"""
+    return ((page - 1) * page_size, page * page_size)
 
 
 class Server:
@@ -40,7 +41,7 @@ class Server:
             List[List]: The dataset of popular baby names.
         """
         if self.__dataset is None:
-            with open(self.DATA_FILE, encoding='utf-8') as f:
+            with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
                 dataset = [row for row in reader]
             self.__dataset = dataset[1:]  # Skip the header
